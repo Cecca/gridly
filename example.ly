@@ -39,6 +39,27 @@
   c1 |
 }
 
+\gridPutMusic "alto" #1
+\relative c' {
+  e1 |
+}
+
+\gridPutMusic "alto" #2
+\relative c' {
+  e1 |
+}
+
+\gridPutMusic "basso" #1
+\relative c' {
+  c1 |
+}
+
+\gridPutMusic "basso" #2
+\relative c' {
+  b1 |
+}
+
+
 \displayMusicGrid
 
 \checkMusicGrid
@@ -56,5 +77,6 @@ sections = #'(1 . 2)
   >>
 
   \layout{}
+  \midi{}
 }
 
