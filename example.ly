@@ -35,13 +35,12 @@
 
 \displayMusicGrid
 
-#(check-durations 2)
+\checkMusicGrid
 
 \score {
   <<
     \gridGetMusic "tenore" #'(2 . 3)
-    %%% you can also get all the segments
-    %%\gridGetMusic "tenore" #'all
+    
   >>
 
   \layout{}

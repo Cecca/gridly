@@ -63,23 +63,7 @@
          (assoc-ref cell key)
          #f)))
 
-#(define (---check-durations--- segment)
-   "Checks that all parts in the segment have the same duration, throwing an error if not."
-   (let* ((durations (map
-                      (lambda (part)
-                        (let ((duration (ly:moment-main
-                                         (ly:music-length
-                                          (get-music-cell part segment #:music)))))
-                          (cons part duration)))
-                      (hash-ref music-grid-meta #:parts)))
-          (first-dur (cdar durations)))
-     (for-each
-      (lambda (d-pair)
-        (if (not (equal? first-dur (cdr d-pair)))
-            (ly:error "The duration of ")))
-      durations)))
-
-#(define (check-durations segment)
+#(define (check-durations segment strict)
    (let* ((durations (map
                       (lambda (part)
                         (let ((cell (get-music-cell part segment #:music)))
@@ -96,13 +80,16 @@
          (for-each
           (lambda (d-pair)
             (if (not (equal? reference-duration (cdr d-pair)))
-                (ly:warning
-                 "Expected length of ~a for part ~a segment ~a, got ~a"
-                 reference-duration (car d-pair) segment (cdr d-pair))))
+                (let ((msg-args
+                       (list "Expected length of ~a for part ~a segment ~a, got ~a"
+                             reference-duration (car d-pair) segment (cdr d-pair))))
+                  (if strict
+                      (apply ly:error msg-args)
+                      (apply ly:warning msg-args)))))
           defined-durations))))
 
 displayMusicGrid =
-#(define-scheme-function
+#(define-void-function
    (parser location) ()
    (let* ((num-segments (hash-ref music-grid-meta #:segments))
           (segments (map (lambda (x) (+ 1 x)) (iota num-segments)))
@@ -128,6 +115,15 @@ displayMusicGrid =
            segments))
         parts))
      (newline)))
+
+checkMusicGrid =
+#(define-void-function
+   (parser location) ()
+   (for-each
+    (lambda (segment)
+      (check-durations segment #f))
+    (map (lambda (x) (+ 1 x))
+         (iota (hash-ref music-grid-meta #:segments)))))
 
 %%% Grid initialization
 initMusicGrid =
