@@ -22,22 +22,25 @@
 #(define (check-coords part segment)
    (cond
     ;; Check segment
-    ((not (integer? segment)) (error "Segment must be an integer, was " segment))
-    ((> 1 segment) (error "Segment must be > 1, was" segment))
+    ((not (integer? segment))
+     (ly:error "Segment must be an integer, was " segment))
+    ((> 1 segment)
+     (ly:error "Segment must be > 1, was" segment))
     ((< (hash-ref music-grid-meta #:segments) segment)
-     (error (stringfy "Segment must be less than "
+     (ly:error (stringfy "Segment must be less than "
                       (hash-ref music-grid-meta #:segments) ", was" )
             segment))
     ;; Check part
-    ((not (string? part)) (error "Part must be a string"))
+    ((not (string? part))
+     (ly:error "Part must be a string"))
     ((not (member part (hash-ref music-grid-meta #:parts)))
-     (error "Part must be defined in \\initMusicGrid"))
+     (ly:error "Part must be defined in \\initMusicGrid"))
     (#t #t)))
 
 #(define (check-grid)
    (if music-grid-meta
        #t
-       (error "You must fist call \\initMusicGrid")))
+       (ly:error "You must first call \\initMusicGrid")))
 
 #(define (display-cell cell)
    "Display the given cell: '((part . segment) . music)"
@@ -104,13 +107,14 @@ initMusicGrid =
      (if res
          (if (ly:music? res)
              res
-             (error (stringfy "Expected music for key '" key "'! Got") res))
+             (ly:error (stringfy "Expected music for key '" key "'! Got") res))
          #{ #})))
 
 gridPutMusic =
 #(define-void-function
    (parser location part segment ctx-mod music)
    (string? number? (ly:context-mod?) ly:music?)
+   (check-grid)
    (check-coords part segment)
    (let ((props '()))
      (if ctx-mod
@@ -130,11 +134,13 @@ gridPutMusic =
 gridGetMusic =
 #(define-music-function
    (parser location part start-end) (string? pair?)
-   (check-coords part segment)
-   (let* ((start (car start-end))
-          (end (cdr start-end))
-          (segments (map (lambda (x) (+ x start)) (iota (+ 1 (- end start)))))
-          (elems (map (lambda (i) (get-music-cell part i #:music)) segments)))
-     (make-music
-      'SequentialMusic
-      'elements elems)))
+   (check-grid)
+   (let ((start (car start-end))
+         (end (cdr start-end)))
+     (check-coords part start)
+     (check-coords part end)
+     (let* ((segments (map (lambda (x) (+ x start)) (iota (+ 1 (- end start)))))
+            (elems (map (lambda (i) (get-music-cell part i #:music)) segments)))
+       (make-music
+        'SequentialMusic
+        'elements elems))))
