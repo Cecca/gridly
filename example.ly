@@ -7,9 +7,15 @@
                       "alto"
                       "basso")
 
+
+\gridPutMusic "soprano" #1
+\relative c' {
+  e2 g |
+}
+
 \gridPutMusic "soprano" #2
 \relative c' {
-  c2 d2 |
+  f2 d2 |
 }
 
 \gridPutMusic "tenore" #1
@@ -37,10 +43,16 @@
 
 \checkMusicGrid
 
+sections = #'(1 . 2)
+
 \score {
   <<
-    \gridGetMusic "tenore" #'(2 . 3)
-    
+    \new ChoirStaff <<
+      \new Staff \new Voice \gridGetMusic "soprano" \sections
+      \new Staff \new Voice \gridGetMusic "alto" \sections
+      \new Staff \new Voice \gridGetMusic "tenore" \sections
+      \new Staff \new Voice \gridGetMusic "basso" \sections
+    >>  
   >>
 
   \layout{}
