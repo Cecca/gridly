@@ -32,7 +32,7 @@
 
 \score {
   <<
-    \gridGetMusic "tenore" #'all
+    \gridGetMusic "tenore" #'(2 . 3)
     %%% you can also get all the segments
     %%\gridGetMusic "tenore" #'all
   >>
