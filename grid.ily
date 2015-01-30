@@ -131,12 +131,20 @@ gridPutMusic =
                    (cons #:closing (get-music props "closing")))))
        (hash-set! music-grid key value))))
 
+#(define (segment-selector? x)
+   (or (pair? x)
+       (equal? 'all x)))
+
 gridGetMusic =
 #(define-music-function
-   (parser location part start-end) (string? pair?)
+   (parser location part start-end) (string? segment-selector?)
    (check-grid)
-   (let ((start (car start-end))
-         (end (cdr start-end)))
+   (let ((start (if (equal? 'all start-end)
+                    1
+                    (car start-end)))
+         (end (if (equal? 'all start-end)
+                  (hash-ref music-grid-meta #:segments)
+                  (cdr start-end))))
      (check-coords part start)
      (check-coords part end)
      (let* ((segments (map (lambda (x) (+ x start)) (iota (+ 1 (- end start)))))
