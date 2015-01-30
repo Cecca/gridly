@@ -149,6 +149,8 @@ gridGetMusic =
      (check-coords part end)
      (let* ((segments (map (lambda (x) (+ x start)) (iota (+ 1 (- end start)))))
             (elems (map (lambda (i) (get-music-cell part i #:music)) segments)))
-       (make-music
-        'SequentialMusic
-        'elements elems))))
+       (if (member #f elems)
+           (ly:error "There is a segment still to be created!")
+           (make-music
+            'SequentialMusic
+            'elements elems)))))

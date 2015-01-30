@@ -2,7 +2,7 @@
 
 \include "grid.ily"
 
-\initMusicGrid #3 #'("soprano"
+\initMusicGrid #22 #'("soprano"
                       "tenore"
                       "alto"
                       "basso")
@@ -32,7 +32,7 @@
 
 \score {
   <<
-    \gridGetMusic "tenore" #'(2 . 3)
+    \gridGetMusic "tenore" #'all
     %%% you can also get all the segments
     %%\gridGetMusic "tenore" #'all
   >>
