@@ -63,6 +63,44 @@
          (assoc-ref cell key)
          #f)))
 
+#(define (---check-durations--- segment)
+   "Checks that all parts in the segment have the same duration, throwing an error if not."
+   (let* ((durations (map
+                      (lambda (part)
+                        (let ((duration (ly:moment-main
+                                         (ly:music-length
+                                          (get-music-cell part segment #:music)))))
+                          (cons part duration)))
+                      (hash-ref music-grid-meta #:parts)))
+          (first-dur (cdar durations)))
+     (for-each
+      (lambda (d-pair)
+        (if (not (equal? first-dur (cdr d-pair)))
+            (ly:error "The duration of ")))
+      durations)))
+
+#(define (check-durations segment)
+   (let* ((durations (map
+                      (lambda (part)
+                        (let ((cell (get-music-cell part segment #:music)))
+                          (cons part
+                                (if cell
+                                    (ly:moment-main (ly:music-length cell))
+                                    #f))))
+                      (hash-ref music-grid-meta #:parts)))
+          (defined-durations (filter cdr durations))
+          (reference-duration (if (null? defined-durations)
+                                  #f
+                                  (cdar defined-durations))))
+     (if reference-duration
+         (for-each
+          (lambda (d-pair)
+            (if (not (equal? reference-duration (cdr d-pair)))
+                (ly:warning
+                 "Expected length of ~a for part ~a segment ~a, got ~a"
+                 reference-duration (car d-pair) segment (cdr d-pair))))
+          defined-durations))))
+
 displayMusicGrid =
 #(define-scheme-function
    (parser location) ()

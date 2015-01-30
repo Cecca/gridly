@@ -7,6 +7,11 @@
                       "alto"
                       "basso")
 
+\gridPutMusic "soprano" #2
+\relative c' {
+  c2 d2 |
+}
+
 \gridPutMusic "tenore" #1
 \relative c' {
   c1 |
@@ -29,6 +34,8 @@
 }
 
 \displayMusicGrid
+
+#(check-durations 2)
 
 \score {
   <<
