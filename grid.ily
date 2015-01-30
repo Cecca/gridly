@@ -19,6 +19,26 @@
                      (object->string it)))
                items)))
 
+#(define (check-coords part segment)
+   (cond
+    ;; Check segment
+    ((not (integer? segment)) (error "Segment must be an integer, was " segment))
+    ((> 1 segment) (error "Segment must be > 1, was" segment))
+    ((< (hash-ref music-grid-meta #:segments) segment)
+     (error (stringfy "Segment must be less than "
+                      (hash-ref music-grid-meta #:segments) ", was" )
+            segment))
+    ;; Check part
+    ((not (string? part)) (error "Part must be a string"))
+    ((not (member part (hash-ref music-grid-meta #:parts)))
+     (error "Part must be defined in \\initMusicGrid"))
+    (#t #t)))
+
+#(define (check-grid)
+   (if music-grid-meta
+       #t
+       (error "You must fist call \\initMusicGrid")))
+
 #(define (display-cell cell)
    "Display the given cell: '((part . segment) . music)"
    (display (stringfy
@@ -34,6 +54,7 @@
 #(define (get-music-cell part segment key)
    "Retrieves the music associated to `key` from the cell identified
     by `part` and `segment`"
+   (check-coords part segment)
    (let ((cell (hash-ref music-grid (cons part segment))))
      (if cell
          (assoc-ref cell key)
@@ -90,6 +111,7 @@ gridPutMusic =
 #(define-void-function
    (parser location part segment ctx-mod music)
    (string? number? (ly:context-mod?) ly:music?)
+   (check-coords part segment)
    (let ((props '()))
      (if ctx-mod
          (for-each
@@ -108,6 +130,7 @@ gridPutMusic =
 gridGetMusic =
 #(define-music-function
    (parser location part start-end) (string? pair?)
+   (check-coords part segment)
    (let* ((start (car start-end))
           (end (cdr start-end))
           (segments (map (lambda (x) (+ x start)) (iota (+ 1 (- end start)))))
