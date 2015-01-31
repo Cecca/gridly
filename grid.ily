@@ -1,12 +1,12 @@
 \version "2.18.2"
 
-#(use-modules (ice-9 format))
-
 %%% The association list holding all the music.
-#(define music-grid (make-hash-table))
+#(if (not (defined? 'music-grid))
+     (define music-grid #f))
 
 %%% Information that needs to be set up using \initMusicGrid
-#(define music-grid-meta #f)
+#(if (not (defined? 'music-grid-meta))
+     (define music-grid-meta #f))
 
 %%% Some utility functions
 
@@ -129,9 +129,16 @@ checkMusicGrid =
 initMusicGrid =
 #(define-void-function
    (parser location segments parts) (number? list?)
-   (set! music-grid-meta (make-hash-table))
-   (hash-set! music-grid-meta #:segments segments)
-   (hash-set! music-grid-meta #:parts parts))
+   (if music-grid
+       (ly:warning "Music grid already initialized, skipping initialization")
+       (set! music-grid (make-hash-table)))
+   (if music-grid-meta
+       (ly:warning
+        "Music grid metadata already initialized, skipping initialization")
+       (begin
+         (set! music-grid-meta (make-hash-table))
+         (hash-set! music-grid-meta #:segments segments)
+         (hash-set! music-grid-meta #:parts parts))))
 
 
 %%% Grid manipulation
