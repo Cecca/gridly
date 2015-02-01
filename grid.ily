@@ -142,12 +142,7 @@ initMusicGrid =
              (ly:error "Expected music for key ~a! Got ~a" key res))
          #{ #})))
 
-gridPutMusic =
-#(define-void-function
-   (parser location part segment ctx-mod music)
-   (string? number? (ly:context-mod?) ly:music?)
-   (check-grid)
-   (check-coords part segment)
+#(define (context-mod->alist ctx-mod)
    (let ((props '()))
      (if ctx-mod
          (for-each
@@ -156,13 +151,22 @@ gridPutMusic =
                   (assoc-set! props
                               (symbol->string (cadr mod)) (caddr mod))))
           (ly:get-context-mods ctx-mod)))
-     (let ((key (cons part segment))
-           (value (make <cell>
-                    #:music music
-                    #:lyrics (assoc-ref props "lyrics")
-                    #:opening (alist-get-music props "opening")
-                    #:closing (alist-get-music props "closing"))))
-       (hash-set! music-grid key value))))
+     props))
+
+gridPutMusic =
+#(define-void-function
+   (parser location part segment ctx-mod music)
+   (string? number? (ly:context-mod?) ly:music?)
+   (check-grid)
+   (check-coords part segment)
+   (let* ((props (context-mod->alist ctx-mod))
+          (key (cons part segment))
+          (value (make <cell>
+                   #:music music
+                   #:lyrics (assoc-ref props "lyrics")
+                   #:opening (alist-get-music props "opening")
+                   #:closing (alist-get-music props "closing"))))
+     (hash-set! music-grid key value)))
 
 #(define (segment-selector? x)
    (or (pair? x)
