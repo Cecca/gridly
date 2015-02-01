@@ -165,9 +165,7 @@ gridPutMusic =
    (or (pair? x)
        (equal? 'all x)))
 
-gridGetMusic =
-#(define-music-function
-   (parser location part start-end) (string? segment-selector?)
+#(define (get-cell-range part start-end)
    (check-grid)
    (let ((start (if (equal? 'all start-end)
                     1
@@ -181,11 +179,18 @@ gridGetMusic =
             (elems (map (lambda (i)
                           (let ((cell (get-music-cell part i)))
                             (if cell
-                                (cell:music cell)
+                                cell
                                 (ly:error
                                  "Segment '~a' of part '~a' is still empty"
                                  i part))))
                         segments)))
-       (make-music
-        'SequentialMusic
-        'elements elems))))
+       elems)))
+
+gridGetMusic =
+#(define-music-function
+   (parser location part start-end) (string? segment-selector?)
+   (let* ((cells (get-cell-range part start-end))
+          (music (map cell:music cells)))
+     (make-music
+      'SequentialMusic
+      'elements music)))
