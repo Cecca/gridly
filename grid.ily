@@ -1,5 +1,17 @@
 \version "2.18.2"
 
+#(use-modules (oop goops))
+
+#(define-class <cell> ()
+   (barcheck #:init-keyword #:barckeck
+             #:getter cell:barcheck)
+   (music #:init-keyword #:music
+          #:getter cell:music)
+   (opening #:init-keyword #:opening
+            #:getter cell:opening)
+   (closing #:init-keyword #:closing
+            #:getter cell:closing))
+
 %%% The association list holding all the music.
 #(if (not (defined? 'music-grid))
      (define music-grid #f))
@@ -28,36 +40,25 @@
     (#t #t)))
 
 #(define (check-grid)
-   (if music-grid-meta
+   (if (and music-grid music-grid-meta)
        #t
        (ly:error "You must first call \\initMusicGrid")))
-
-#(define (display-cell cell)
-   "Display the given cell: '((part . segment) . music)"
-   (ly:format "==== Part ~a segment ~a duration ~a ====\n"
-              (caar cell)
-              (cdar cell)
-              (ly:moment-main (ly:music-length (cdr cell)))))
 
 #(define (display-spaces num-spaces)
    (for-each (lambda (x) (display " ")) (iota num-spaces)))
 
-#(define (get-music-cell part segment key)
-   "Retrieves the music associated to `key` from the cell identified
-    by `part` and `segment`"
+#(define (get-music-cell part segment)
    (check-coords part segment)
-   (let ((cell (hash-ref music-grid (cons part segment))))
-     (if cell
-         (assoc-ref cell key)
-         #f)))
+   (hash-ref music-grid (cons part segment)))
 
 #(define (check-durations segment strict)
    (let* ((durations (map
                       (lambda (part)
-                        (let ((cell (get-music-cell part segment #:music)))
+                        (let ((cell (get-music-cell part segment)))
                           (cons part
                                 (if cell
-                                    (ly:moment-main (ly:music-length cell))
+                                    (ly:moment-main (ly:music-length
+                                                     (cell:music cell)))
                                     #f))))
                       (hash-ref music-grid-meta #:parts)))
           (defined-durations (filter cdr durations))
@@ -131,7 +132,7 @@ initMusicGrid =
 
 %%% Grid manipulation
 
-#(define (get-music alist key)
+#(define (alist-get-music alist key)
    (let ((res (assoc-ref alist key)))
      (if res
          (if (ly:music? res)
@@ -154,10 +155,10 @@ gridPutMusic =
                               (symbol->string (cadr mod)) (caddr mod))))
           (ly:get-context-mods ctx-mod)))
      (let ((key (cons part segment))
-           (value (list
-                   (cons #:music music)
-                   (cons #:opening (get-music props "opening"))
-                   (cons #:closing (get-music props "closing")))))
+           (value (make <cell>
+                    #:music music
+                    #:opening (alist-get-music props "opening")
+                    #:closing (alist-get-music props "closing"))))
        (hash-set! music-grid key value))))
 
 #(define (segment-selector? x)
@@ -178,9 +179,9 @@ gridGetMusic =
      (check-coords part end)
      (let* ((segments (map (lambda (x) (+ x start)) (iota (+ 1 (- end start)))))
             (elems (map (lambda (i)
-                          (let ((cell (get-music-cell part i #:music)))
+                          (let ((cell (get-music-cell part i)))
                             (if cell
-                                cell
+                                (cell:music cell)
                                 (ly:error
                                  "Segment '~a' of part '~a' is still empty"
                                  i part))))
