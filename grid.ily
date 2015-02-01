@@ -4,13 +4,13 @@
 
 #(define-class <cell> ()
    (barcheck #:init-keyword #:barckeck
-             #:getter get-barcheck)
+             #:getter cell:barcheck)
    (music #:init-keyword #:music
-          #:getter get-music)
+          #:getter cell:music)
    (opening #:init-keyword #:opening
-            #:getter get-opening)
+            #:getter cell:opening)
    (closing #:init-keyword #:closing
-            #:getter get-closing))
+            #:getter cell:closing))
 
 %%% The association list holding all the music.
 #(if (not (defined? 'music-grid))
@@ -58,7 +58,7 @@
                           (cons part
                                 (if cell
                                     (ly:moment-main (ly:music-length
-                                                     (get-music cell)))
+                                                     (cell:music cell)))
                                     #f))))
                       (hash-ref music-grid-meta #:parts)))
           (defined-durations (filter cdr durations))
@@ -181,7 +181,7 @@ gridGetMusic =
             (elems (map (lambda (i)
                           (let ((cell (get-music-cell part i)))
                             (if cell
-                                (get-music cell)
+                                (cell:music cell)
                                 (ly:error
                                  "Segment '~a' of part '~a' is still empty"
                                  i part))))
