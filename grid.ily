@@ -10,15 +10,6 @@
 
 %%% Some utility functions
 
-#(define (stringfy . items)
-   "Concatenates all the given items in a single string"
-   (apply string-append
-          (map (lambda (it)
-                 (if (string? it)
-                     it
-                     (object->string it)))
-               items)))
-
 #(define (check-coords part segment)
    (cond
     ;; Check segment
@@ -27,9 +18,8 @@
     ((> 1 segment)
      (ly:error "Segment must be > 1, was" segment))
     ((< (hash-ref music-grid-meta #:segments) segment)
-     (ly:error (stringfy "Segment must be less than "
-                      (hash-ref music-grid-meta #:segments) ", was" )
-            segment))
+     (ly:error "Segment must be less than ~a, was ~a"
+               (hash-ref music-grid-meta #:segments) segment))
     ;; Check part
     ((not (string? part))
      (ly:error "Part must be a string"))
@@ -44,12 +34,10 @@
 
 #(define (display-cell cell)
    "Display the given cell: '((part . segment) . music)"
-   (display (stringfy
-             "==== Part " (caar cell)
-             " segment " (cdar cell)
-             " duration " (ly:moment-main (ly:music-length (cdr cell)))
-             " ===="))
-   (newline))
+   (ly:format "==== Part ~a segment ~a duration ~a ====\n"
+              (caar cell)
+              (cdar cell)
+              (ly:moment-main (ly:music-length (cdr cell)))))
 
 #(define (display-spaces num-spaces)
    (for-each (lambda (x) (display " ")) (iota num-spaces)))
@@ -100,7 +88,7 @@ displayMusicGrid =
      (let ((longest-name (reduce max 0
                                  (map string-length parts))))
        (display-spaces longest-name)
-       (for-each (lambda (x) (display (stringfy " " x))) segments)
+       (for-each (lambda (x) (ly:format " ~a" x)) segments)
        (for-each
         (lambda (part)
           (newline)
@@ -148,7 +136,7 @@ initMusicGrid =
      (if res
          (if (ly:music? res)
              res
-             (ly:error (stringfy "Expected music for key '" key "'! Got") res))
+             (ly:error "Expected music for key ~a! Got ~a" key res))
          #{ #})))
 
 gridPutMusic =
