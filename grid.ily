@@ -7,6 +7,8 @@
              #:getter cell:barcheck)
    (music #:init-keyword #:music
           #:getter cell:music)
+   (lyrics #:init-keyword #:lyrics
+          #:getter cell:lyrics)
    (opening #:init-keyword #:opening
             #:getter cell:opening)
    (closing #:init-keyword #:closing
@@ -157,6 +159,7 @@ gridPutMusic =
      (let ((key (cons part segment))
            (value (make <cell>
                     #:music music
+                    #:lyrics (assoc-ref props "lyrics")
                     #:opening (alist-get-music props "opening")
                     #:closing (alist-get-music props "closing"))))
        (hash-set! music-grid key value))))
@@ -194,3 +197,14 @@ gridGetMusic =
      (make-music
       'SequentialMusic
       'elements music)))
+
+gridGetLyrics =
+#(define-music-function
+   (parser location part start-end) (string? segment-selector?)
+   (let* ((cells (get-cell-range part start-end))
+          (lyrics (map cell:lyrics cells)))
+     (if (member #f lyrics)
+         (ly:error "A segment is missing lyrics!")
+         (make-music
+          'SequentialMusic
+          'elements lyrics))))

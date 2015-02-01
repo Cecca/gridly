@@ -9,11 +9,17 @@
 
 
 \gridPutMusic "soprano" #1
+\with {
+  lyrics = \lyricmode { Fa la }
+}
 \relative c' {
   e2 g |
 }
 
 \gridPutMusic "soprano" #2
+\with {
+  lyrics = \lyricmode { la la! }
+}
 \relative c' {
   f2 d2 |
 }
@@ -69,7 +75,9 @@ sections = #'(1 . 2)
 \score {
   <<
     \new ChoirStaff <<
-      \new Staff \new Voice \gridGetMusic "soprano" \sections
+      \new Staff \new Voice = "soprano" \gridGetMusic "soprano" \sections
+      \new Lyrics \lyricsto "soprano" \gridGetLyrics "soprano" \sections
+
       \new Staff \new Voice \gridGetMusic "alto" \sections
       \new Staff \new Voice \gridGetMusic "tenore" \sections
       \new Staff \new Voice \gridGetMusic "basso" \sections
