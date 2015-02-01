@@ -40,7 +40,7 @@
     (#t #t)))
 
 #(define (check-grid)
-   (if music-grid-meta
+   (if (and music-grid music-grid-meta)
        #t
        (ly:error "You must first call \\initMusicGrid")))
 
