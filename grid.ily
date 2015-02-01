@@ -1,5 +1,17 @@
 \version "2.18.2"
 
+#(use-modules (oop goops))
+
+#(define-class <cell> ()
+   (barcheck #:init-keyword #:barckeck
+             #:getter get-barcheck)
+   (music #:init-keyword #:music
+          #:getter get-music)
+   (opening #:init-keyword #:opening
+            #:getter get-opening)
+   (closing #:init-keyword #:closing
+            #:getter get-closing))
+
 %%% The association list holding all the music.
 #(if (not (defined? 'music-grid))
      (define music-grid #f))
@@ -31,13 +43,6 @@
    (if music-grid-meta
        #t
        (ly:error "You must first call \\initMusicGrid")))
-
-#(define (display-cell cell)
-   "Display the given cell: '((part . segment) . music)"
-   (ly:format "==== Part ~a segment ~a duration ~a ====\n"
-              (caar cell)
-              (cdar cell)
-              (ly:moment-main (ly:music-length (cdr cell)))))
 
 #(define (display-spaces num-spaces)
    (for-each (lambda (x) (display " ")) (iota num-spaces)))
