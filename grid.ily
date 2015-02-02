@@ -220,3 +220,10 @@ gridGetLyrics =
          (make-music
           'SequentialMusic
           'elements lyrics))))
+
+gridGetStructure =
+#(define-music-function
+   (parser location start-end) (segment-selector?)
+   #{
+     \gridGetMusic "<structure>" $start-end
+   #})

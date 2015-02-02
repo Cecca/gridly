@@ -9,6 +9,13 @@
 
 \gridSetStructure #1
 \relative c' {
+  s1*0 \mark #1
+  s1 |
+}
+
+\gridSetStructure #2
+\relative c' {
+  \mark #2
   s1 |
 }
 
@@ -79,7 +86,10 @@ sections = #'(1 . 2)
 \score {
   <<
     \new ChoirStaff <<
-      \new Staff \new Voice = "soprano" \gridGetMusic "soprano" \sections
+      \new Staff <<
+        \new Voice \gridGetStructure \sections
+        \new Voice = "soprano" \gridGetMusic "soprano" \sections
+      >>
       \new Lyrics \lyricsto "soprano" \gridGetLyrics "soprano" \sections
 
       \new Staff \new Voice \gridGetMusic "alto" \sections
