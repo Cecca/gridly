@@ -27,18 +27,33 @@ SATBChoir =
      >>
    #})
 
+
 rehearsalMidi =
-#(define-music-function
-   (parser location music name) (ly:music? string?)
-   #{
-     \unfoldRepeats <<
-       $music
-       \context Staff = $name {
-         \set Score.midiMinimumVolume = #0.4
-         \set Score.midiMaximumVolume = #0.4
-         \set Staff.midiMinimumVolume = #0.8
-         \set Staff.midiMaximumVolume = #1.0
-         \set Staff.midiInstrument = "acoustic grand"
-       }
-     >>
-   #})
+#(define-void-function
+   (parser location music name)
+   (ly:music? string?)
+   (let ((book
+          #{
+            \book {
+              \score {
+                \unfoldRepeats <<
+                  $music
+                  \context Staff = $name {
+                    \set Score.midiMinimumVolume = #0.4
+                    \set Score.midiMaximumVolume = #0.4
+                    \set Staff.midiMinimumVolume = #0.8
+                    \set Staff.midiMaximumVolume = #1.0
+                    \set Staff.midiInstrument = "acoustic grand"
+                  }
+                >>
+                \midi { }
+              }
+            }
+          #}))
+     (ly:book-process book
+                      #{ \paper { } #}
+                      #{ \layout { } #}
+                      (string-append
+                       (ly:parser-output-name parser)
+                       "-rehearsal-"
+                       name))))
