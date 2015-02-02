@@ -73,7 +73,7 @@
           (lambda (d-pair)
             (if (not (equal? reference-duration (cdr d-pair)))
                 (let ((msg-args
-                       (list "Expected length of ~a for part ~a segment ~a, got ~a"
+                       (list "Expected length of ~a for ~a:~a, got ~a"
                              reference-duration (car d-pair) segment (cdr d-pair))))
                   (if strict
                       (apply ly:error msg-args)
