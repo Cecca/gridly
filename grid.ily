@@ -128,10 +128,10 @@ initMusicGrid =
 #(define-void-function
    (parser location segments parts) (number? list?)
    (if music-grid
-       (ly:warning "Music grid already initialized, skipping initialization")
+       (ly:debug "Music grid already initialized, skipping initialization")
        (set! music-grid (make-hash-table)))
    (if music-grid-meta
-       (ly:warning
+       (ly:debug
         "Music grid metadata already initialized, skipping initialization")
        (begin
          (set! music-grid-meta (make-hash-table))
