@@ -86,3 +86,34 @@ sections = #'all
   \midi{}
 }
 
+\book {
+  \bookOutputSuffix "soprano"
+  \score {
+    \rehearsalMidi {\SATBChoir \sections} "soprano"
+    \midi { }
+  }
+}
+
+\book {
+  \bookOutputSuffix "alto"
+  \score {
+    \rehearsalMidi {\SATBChoir \sections} "tenore"
+    \midi { }
+  }
+}
+
+\book {
+  \bookOutputSuffix "tenore"
+  \score {
+    \rehearsalMidi {\SATBChoir \sections} "tenore"
+    \midi { }
+  }
+}
+
+\book {
+  \bookOutputSuffix "basso"
+  \score {
+    \rehearsalMidi {\SATBChoir \sections} "basso"
+    \midi { }
+  }
+}
