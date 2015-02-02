@@ -129,7 +129,7 @@ initMusicGrid =
        (begin
          (set! music-grid-meta (make-hash-table))
          (hash-set! music-grid-meta #:segments segments)
-         (hash-set! music-grid-meta #:parts parts))))
+         (hash-set! music-grid-meta #:parts (cons "<structure>" parts)))))
 
 
 %%% Grid manipulation
