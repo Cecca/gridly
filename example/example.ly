@@ -1,22 +1,29 @@
 \version "2.18.2"
 
 \include "grid.ily"
+\include "grid-templates.ily"
 
-\initMusicGrid #22 #'("soprano"
+\initMusicGrid #2 #'("soprano"
                       "tenore"
                       "alto"
                       "basso")
 
 \gridSetStructure #1
+\with {
+  lyrics = \lyricmode { Fa }
+}
 \relative c' {
   s1*0 \mark #1
   s1 |
 }
 
 \gridSetStructure #2
+\with {
+  lyrics = \lyricmode { la la! }
+}
 \relative c' {
   \mark #2
-  s1 |
+  s1 | s1 \bar "|." |
 }
 
 \gridPutMusic "soprano" #1
@@ -29,10 +36,10 @@
 
 \gridPutMusic "soprano" #2
 \with {
-  lyrics = \lyricmode { la la! }
+  lyrics = \lyricmode { la la la! }
 }
 \relative c' {
-  f2 d2 |
+  f2 d2 | c1 |
 }
 
 \gridPutMusic "tenore" #1
@@ -42,18 +49,7 @@
 
 \gridPutMusic "tenore" #2
 \relative c' {
-  e1 |
-}
-
-\gridPutMusic "tenore" #3
-\with {
-  opening = { \time 4/4 }
-  
-  %% Throws an error
-  %% closing = #3
-}
-\relative c' {
-  c1 |
+  e1 | e1 |
 }
 
 \gridPutMusic "alto" #1
@@ -63,7 +59,7 @@
 
 \gridPutMusic "alto" #2
 \relative c' {
-  e1 |
+  e1 | g1 |
 }
 
 \gridPutMusic "basso" #1
@@ -73,30 +69,18 @@
 
 \gridPutMusic "basso" #2
 \relative c' {
-  b1 |
+  b1 | c1 |
 }
-
 
 \displayMusicGrid
 
 \checkMusicGrid
 
-sections = #'(1 . 2)
+sections = #'all
 
 \score {
-  <<
-    \new ChoirStaff <<
-      \new Staff <<
-        \new Voice \gridGetStructure \sections
-        \new Voice = "soprano" \gridGetMusic "soprano" \sections
-      >>
-      \new Lyrics \lyricsto "soprano" \gridGetLyrics "soprano" \sections
-
-      \new Staff \new Voice \gridGetMusic "alto" \sections
-      \new Staff \new Voice \gridGetMusic "tenore" \sections
-      \new Staff \new Voice \gridGetMusic "basso" \sections
-    >>  
-  >>
+  
+  \SATBChoir \sections
 
   \layout{}
   \midi{}
