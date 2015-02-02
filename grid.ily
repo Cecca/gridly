@@ -91,7 +91,7 @@ displayMusicGrid =
      (let ((longest-name (reduce max 0
                                  (map string-length parts))))
        (display-spaces longest-name)
-       (for-each (lambda (x) (ly:format " ~a" x)) segments)
+       (for-each (lambda (x) (display (ly:format " ~a" x))) segments)
        (for-each
         (lambda (part)
           (newline)
