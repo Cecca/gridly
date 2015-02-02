@@ -1,6 +1,7 @@
 \version "2.18.2"
 
 #(use-modules (oop goops))
+#(use-modules (ice-9 regex))
 
 #(define-class <cell> ()
    (barcheck #:init-keyword #:barckeck
@@ -28,7 +29,7 @@
    (cond
     ;; Check segment
     ((not (integer? segment))
-     (ly:error "Segment must be an integer, was " segment))
+     (ly:error "Segment must be an integer, was ~a" segment))
     ((> 1 segment)
      (ly:error "Segment must be > 1, was" segment))
     ((< (hash-ref music-grid-meta #:segments) segment)
@@ -115,6 +116,12 @@ checkMusicGrid =
       (check-durations segment #f))
     (map (lambda (x) (+ 1 x))
          (iota (hash-ref music-grid-meta #:segments)))))
+
+%%% This is taken from Lalily
+#(define (test-location? parser location)
+   (let ((outname (ly:parser-output-name parser))
+         (locname (car (ly:input-file-line-char-column location))))
+     (regexp-match? (string-match (format "^(.*/)?~A\\.i?ly$" outname) locname))))
 
 %%% Grid initialization
 initMusicGrid =
@@ -216,6 +223,15 @@ gridGetMusic =
       'SequentialMusic
       'elements music)))
 
+gridGetOpening =
+#(define-music-function
+   (parser location part start-end) (string? segment-selector?)
+   (let* ((cells (get-cell-range part start-end))
+          (music (map cell:opening cells)))
+     (make-music
+      'SequentialMusic
+      'elements music)))
+
 gridGetLyrics =
 #(define-music-function
    (parser location part start-end) (string? segment-selector?)
@@ -233,3 +249,37 @@ gridGetStructure =
    #{
      \gridGetMusic "<structure>" $start-end
    #})
+
+gridTest =
+#(define-void-function
+   (parser location part segment)
+   (string? number?)
+   (check-grid)
+   (check-coords part segment)
+   (if (test-location? parser location)
+       (begin
+         (display "Compiling test file\n")
+         (if (not (get-music-cell part segment))
+             (ly:error "There is no music cell for ~a:~a"
+                       part segment))
+         (let* ((opening (cell:opening (get-music-cell part segment)))
+                (closing (cell:closing (get-music-cell part segment)))
+                (selector (cons segment segment))
+                (book
+                 #{
+                    \book {
+                      \score {
+                              \new Staff \new Voice {
+                                $opening
+                                \gridGetMusic $part $selector
+                                $closing
+                              }
+                         \midi{}
+                         \layout{}
+                      }
+                    }
+                  #}))
+           (ly:book-process book
+                            #{ \paper {} #}
+                            #{ \layout {} #}
+                            (ly:parser-output-name parser))))))
