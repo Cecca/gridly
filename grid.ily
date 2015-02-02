@@ -168,6 +168,14 @@ gridPutMusic =
                    #:closing (alist-get-music props "closing"))))
      (hash-set! music-grid key value)))
 
+gridSetStructure =
+#(define-void-function
+   (parser location segment ctx-mod music)
+   (number? (ly:context-mod? #{ \with{} #}) ly:music?)
+   #{
+     \gridPutMusic "<structure>" $segment $ctx-mod $music
+   #})
+
 #(define (segment-selector? x)
    (or (pair? x)
        (equal? 'all x)))

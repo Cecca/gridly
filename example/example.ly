@@ -7,6 +7,10 @@
                       "alto"
                       "basso")
 
+\gridSetStructure #1
+\relative c' {
+  s1 |
+}
 
 \gridPutMusic "soprano" #1
 \with {
