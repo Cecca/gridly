@@ -185,9 +185,11 @@ gridSetStructure =
 #(define-void-function
    (parser location segment ctx-mod music)
    (number? (ly:context-mod? #{ \with{} #}) ly:music?)
-   #{
-     \gridPutMusic "<structure>" $segment $ctx-mod $music
-   #})
+   (if (get-music-cell "<structure>" segment)
+       (ly:debug "Skipping setting of <structure>:~a, already set" segment)
+       #{
+         \gridPutMusic "<structure>" $segment $ctx-mod $music
+       #}))
 
 #(define (segment-selector? x)
    (or (pair? x)
