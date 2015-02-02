@@ -264,6 +264,7 @@ gridTest =
          (if (not (get-music-cell part segment))
              (ly:error "There is no music cell for ~a:~a"
                        part segment))
+         (check-durations segment #f)
          (let* ((opening (cell:opening (get-music-cell part segment)))
                 (closing (cell:closing (get-music-cell part segment)))
                 (selector (cons segment segment))
