@@ -134,14 +134,6 @@ initMusicGrid =
 
 %%% Grid manipulation
 
-#(define (alist-get-music alist key)
-   (let ((res (assoc-ref alist key)))
-     (if res
-         (if (ly:music? res)
-             res
-             (ly:error "Expected music for key ~a! Got ~a" key res))
-         #{ #})))
-
 #(define (context-mod->alist ctx-mod)
    (let ((props '()))
      (if ctx-mod
@@ -149,7 +141,7 @@ initMusicGrid =
           (lambda (mod)
             (set! props
                   (assoc-set! props
-                              (symbol->string (cadr mod)) (caddr mod))))
+                              (cadr mod) (caddr mod))))
           (ly:get-context-mods ctx-mod)))
      props))
 
@@ -161,11 +153,25 @@ gridPutMusic =
    (check-coords part segment)
    (let* ((props (context-mod->alist ctx-mod))
           (key (cons part segment))
+          ;; This closure will look in the `props' alist for the given
+          ;; symbol, returning the associated value. If the symbol is
+          ;; not in the alist, then a default value is looked up in
+          ;; the corresponding `<structure>' segment. If even there a
+          ;; default value is not found, `default'
+          (props-get (lambda (sym last-default)
+                       (let ((res (assoc-ref props sym)))
+                         (if res
+                             res
+                             (let ((cell-structure
+                                    (get-music-cell "<structure>" segment)))
+                               (if cell-structure
+                                   (slot-ref cell-structure sym)
+                                   last-default))))))
           (value (make <cell>
                    #:music music
-                   #:lyrics (assoc-ref props "lyrics")
-                   #:opening (alist-get-music props "opening")
-                   #:closing (alist-get-music props "closing"))))
+                   #:lyrics (props-get 'lyrics #f)
+                   #:opening (props-get 'opening #{ #})
+                   #:closing (props-get 'closing #{ #}))))
      (hash-set! music-grid key value)))
 
 gridSetStructure =
