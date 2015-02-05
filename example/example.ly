@@ -3,6 +3,8 @@
 \include "grid.ily"
 \include "grid-templates.ily"
 
+\gridVersion "0.1.0"
+
 \initMusicGrid #2 #'("soprano"
                       "tenore"
                       "alto"

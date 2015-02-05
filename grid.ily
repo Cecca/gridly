@@ -12,10 +12,12 @@
 %%%
 %%% * 0.1.0
 %%%   Initial relase, featuring the following public functions:
+%%%    - \gridVersion
 %%%    - \displayMusicGrid
 %%%    - \checkMusicGrid
 %%%    - \initMusicGrid
 %%%    - \gridSetStructure
+%%%    - \gridPutMusic
 %%%    - \gridGetMusic
 %%%    - \gridGetOpening
 %%%    - \gridGetLyrics
@@ -24,7 +26,15 @@
 %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-gridVersion = "0.1.0"
+#(define grid-current-version "0.1.0")
+
+gridVersion =
+#(define-void-function
+   (parser location expected-version) (string?)
+   (if (not (equal? grid-current-version expected-version))
+       (ly:error
+        "You are running gridly version ~a, but the expected version is ~a"
+        grid-current-version expected-version)))
 
 #(use-modules (oop goops))
 #(use-modules (ice-9 regex))
