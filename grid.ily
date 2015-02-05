@@ -1,5 +1,31 @@
 \version "2.18.2"
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+%%%                                Gridly
+%%%                                ======
+%%%
+%%% A simple "segmented grid" framework.
+%%%
+%%% Changelog
+%%% ---------
+%%%
+%%% * 0.1.0
+%%%   Initial relase, featuring the following public functions:
+%%%    - \displayMusicGrid
+%%%    - \checkMusicGrid
+%%%    - \initMusicGrid
+%%%    - \gridSetStructure
+%%%    - \gridGetMusic
+%%%    - \gridGetOpening
+%%%    - \gridGetLyrics
+%%%    - \gridGetStructure
+%%%    - \gridTest
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+gridVersion = "0.1.0"
+
 #(use-modules (oop goops))
 #(use-modules (ice-9 regex))
 
