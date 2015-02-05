@@ -3,12 +3,12 @@
 \include "grid.ily"
 \include "grid-templates.ily"
 
-\gridVersion "0.1.0"
+\gridVersion "0.2.0"
 
-\initMusicGrid #2 #'("soprano"
-                      "tenore"
-                      "alto"
-                      "basso")
+\gridInit #2 #'("soprano"
+                "tenore"
+                "alto"
+                "basso")
 
 \gridSetStructure #1
 \with {
@@ -74,9 +74,9 @@
   b1 | c1 |
 }
 
-\displayMusicGrid
+\gridDisplay
 
-\checkMusicGrid
+\gridCheck
 
 sections = #'all
 

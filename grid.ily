@@ -10,6 +10,15 @@
 %%% Changelog
 %%% ---------
 %%%
+%%% * 0.2.0
+%%%   This is a **breaking** release. The public interface changed.
+%%%
+%%%   - Some refactoring of public function names, to make the interface more
+%%%     consistent. Now all the public music functions start with `grid`.
+%%%      - \displayMusicGrid -> \gridDisplay
+%%%      - \checkMusicGrid   -> \gridCheck
+%%%      - \initMusicGrid    -> \gridInit
+%%%
 %%% * 0.1.0
 %%%   Initial relase, featuring the following public functions:
 %%%    - \gridVersion
@@ -26,7 +35,7 @@
 %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-#(define grid-current-version "0.1.0")
+#(define grid-current-version "0.2.0")
 
 gridVersion =
 #(define-void-function
@@ -45,7 +54,7 @@ gridVersion =
    (music #:init-keyword #:music
           #:getter cell:music)
    (lyrics #:init-keyword #:lyrics
-          #:getter cell:lyrics)
+           #:getter cell:lyrics)
    (opening #:init-keyword #:opening
             #:getter cell:opening)
    (closing #:init-keyword #:closing
@@ -116,7 +125,7 @@ gridVersion =
                       (apply ly:warning msg-args)))))
           defined-durations))))
 
-displayMusicGrid =
+gridDisplay =
 #(define-void-function
    (parser location) ()
    (let* ((num-segments (hash-ref music-grid-meta #:segments))
@@ -144,7 +153,7 @@ displayMusicGrid =
         parts))
      (newline)))
 
-checkMusicGrid =
+gridCheck =
 #(define-void-function
    (parser location) ()
    (for-each
@@ -160,7 +169,7 @@ checkMusicGrid =
      (regexp-match? (string-match (format "^(.*/)?~A\\.i?ly$" outname) locname))))
 
 %%% Grid initialization
-initMusicGrid =
+gridInit =
 #(define-void-function
    (parser location segments parts) (number? list?)
    (if music-grid
