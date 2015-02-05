@@ -251,15 +251,6 @@ gridGetMusic =
       'SequentialMusic
       'elements music)))
 
-gridGetOpening =
-#(define-music-function
-   (parser location part start-end) (string? segment-selector?)
-   (let* ((cells (get-cell-range part start-end))
-          (music (map cell:opening cells)))
-     (make-music
-      'SequentialMusic
-      'elements music)))
-
 gridGetLyrics =
 #(define-music-function
    (parser location part start-end) (string? segment-selector?)
