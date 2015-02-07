@@ -173,14 +173,19 @@ Usage
 For an example of usage on a single file, see
 [example/example.ly](https://github.com/Cecca/gridly/blob/master/example/example.ly).
 
+Instead, for an example of a multi-file score, take a look at
+[example/multi-file](https://github.com/Cecca/gridly/tree/master/example/multi-file).
+
 Changelog
 ---------
 
  * 0.2.1 - Development
+
    Documentation and license
 
    - Write a README
    - Switch from LGPL to GPL
+   - Add a multi-file example
 
  * 0.2.0
    This is a **breaking** release. The public interface changed.
