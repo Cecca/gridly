@@ -179,7 +179,7 @@ Instead, for an example of a multi-file score, take a look at
 Changelog
 ---------
 
- * 0.2.1 - Development
+ * 0.2.1
 
    Documentation and license
 
