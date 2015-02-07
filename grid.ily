@@ -10,7 +10,7 @@
 %%% Changelog
 %%% ---------
 %%%
-%%% * 0.2.0
+%%% * 0.2.0 - development version
 %%%   This is a **breaking** release. The public interface changed.
 %%%
 %%%   - Some refactoring of public function names, to make the interface more
@@ -84,7 +84,7 @@ gridVersion =
     ((not (string? part))
      (ly:error "Part must be a string"))
     ((not (member part (hash-ref music-grid-meta #:parts)))
-     (ly:error "Part must be defined in \\initMusicGrid"))
+     (ly:error "Part must be defined in \\gridInit: ~a" part))
     (#t #t)))
 
 #(define (check-grid)
