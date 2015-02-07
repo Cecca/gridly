@@ -18,12 +18,6 @@
 %%% public interface
 \include "../grid.ily"
 
-%%% Optionally, you may declare the dependency on a specific version
-%%% of the package. This way you get an error if the version you
-%%% include does not match the one you expect, avoiding weird errors
-%%% due to function names changing.
-\gridVersion "0.2.0"
-
 %%% Grid initialization
 %%% -------------------
 %%%

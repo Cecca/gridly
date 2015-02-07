@@ -10,7 +10,7 @@
 %%% Changelog
 %%% ---------
 %%%
-%%% * 0.2.0 - development version
+%%% * 0.2.0
 %%%   This is a **breaking** release. The public interface changed.
 %%%
 %%%   - Some refactoring of public function names, to make the interface more
@@ -18,6 +18,8 @@
 %%%      - \displayMusicGrid -> \gridDisplay
 %%%      - \checkMusicGrid   -> \gridCheck
 %%%      - \initMusicGrid    -> \gridInit
+%%%   - remove the \gridVersion function. Version checking should be
+%%%     the responsibility of some sort of lilypond "package manager"
 %%%
 %%% * 0.1.0
 %%%   Initial relase, featuring the following public functions:
@@ -34,16 +36,6 @@
 %%%    - \gridTest
 %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-#(define grid-current-version "0.2.0")
-
-gridVersion =
-#(define-void-function
-   (parser location expected-version) (string?)
-   (if (not (equal? grid-current-version expected-version))
-       (ly:error
-        "You are running gridly version ~a, but the expected version is ~a"
-        grid-current-version expected-version)))
 
 #(use-modules (oop goops))
 #(use-modules (ice-9 regex))
