@@ -42,7 +42,7 @@
 %%% the dimensions of the grid: how many segments it should have and which
 %%% parts it contains. In this case we are initializing a grid with
 %%% two segments and two parts, namely "soprano" and "basso".
-\gridInit #2 #'("soprano"
+\gridInit #4 #'("soprano"
                 "basso")
 
 %%% You can optionally specify the grid "structure", that is, the
@@ -83,6 +83,20 @@
 \relative c' {
   \mark #1
   \tempo 4=120
+  s1 | s1 |
+}
+
+\gridSetStructure #3
+\relative c' {
+  \mark #2
+  
+  s1 | s1 |
+}
+
+\gridSetStructure #4
+\relative c' {
+  \mark #3
+  
   s1 | s1 \bar "|." |
 }
 
@@ -122,6 +136,27 @@
 \gridPutMusic "basso" #2
 \relative c {
   f2 g | c,1 |
+}
+
+%%% Missing cells
+%%% -------------
+%%% 
+%%% As for missing cells, if there is structure defined for them (as
+%%% in this example), then they will be replaced in the output by
+%%% dummy cells, filled with skips. If the structure is not defined,
+%%% then you will get an error.
+%%%
+%%% Here, for section 3 we are not defining any music. For section 4,
+%%% we define only the soprano, so that you can see the effects of
+%%% these undefined cells in the output (and in the printed grid as
+%%% well)
+
+\gridPutMusic "soprano" #4
+\with {
+  lyrics = \lyricmode {li le!}
+}
+\relative c'' {
+  g1 | c |
 }
 
 %%% Display the grid

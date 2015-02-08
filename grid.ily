@@ -220,6 +220,52 @@ gridSetStructure =
          \gridPutMusic "<structure>" $segment $ctx-mod $music
        #}))
 
+#(define (cons-skip music length)
+   "Conses a skip of the given length in front of the given music"
+   (let ((skip (make-music
+                'SkipEvent
+                'duration
+                (ly:make-duration length 0 1)))
+         (elements (ly:music-property music 'elements)))
+     (make-music
+      'SequentialMusic
+      'elements
+      (cons skip elements))))
+
+#(define (find-durations acc length goal)
+   "Recursively finds the sequence of skips of the same duration of `goal`"
+   (ly:debug "Call find-durations with ~a ~a"
+               length goal)
+   (let ((dur (ly:music-length acc)))
+     (ly:debug "Current duration is ~a" dur)
+     (cond
+      ;; The skips have the desired duration, hence we are done
+      ((equal? dur goal) acc)
+      ;; If we still don't have reached the goal then we try to add
+      ;; another skip in front of the music we already have. If the
+      ;; newly created music length is past the goal, then we recur
+      ;; using smaller skips, otherwise we recur using the new music
+      ;; as the accumulator
+      ((ly:moment<? dur goal)
+       (let* ((new-acc (cons-skip acc length))
+              (new-dur (ly:music-length new-acc)))
+         (if (ly:moment<? goal new-dur)
+             (find-durations acc (* 2 length) goal)
+             (find-durations new-acc length goal))))
+      ;; We shall never get here!
+      (#t (ly:error "We got past the goal!!")))))
+
+#(define (make-skips music)
+   "Creates 'SequentialMusic made of skips with the same duration as
+the given `music'"
+   (let ((start (make-music 'SequentialMusic 'elements '())))
+     (find-durations start 1 (ly:music-length music))))
+
+fill =
+#(define-music-function
+   (parser location music) (ly:music?)
+   (make-skips music))
+
 #(define (segment-selector? x)
    (or (pair? x)
        (integer? x)
@@ -242,14 +288,29 @@ gridSetStructure =
      (check-coords part start)
      (check-coords part end)
      (let* ((segments (map (lambda (x) (+ x start)) (iota (+ 1 (- end start)))))
-            (elems (map (lambda (i)
-                          (let ((cell (get-music-cell part i)))
-                            (if cell
-                                cell
-                                (ly:error
-                                 "Segment '~a' of part '~a' is still empty"
-                                 i part))))
-                        segments)))
+            (elems
+             (map (lambda (i)
+                    (let ((cell (get-music-cell part i)))
+                      (cond
+                       ;; The cell is defined an populated with music
+                       (cell cell)
+                       ;; The cell is not defined, but its structure
+                       ;; is defined. Hence we use a dummy cell filled
+                       ;; with skips matching the length of the given
+                       ;; cell.
+                       ((get-music-cell "<structure>" i)
+                        (make <cell>
+                          #:lyrics #{ #}
+                          #:music
+                          (make-skips
+                           (cell:music
+                            (get-music-cell "<structure>" i)))))
+                       ;; Neither the cell nor the structure are
+                       ;; defined. Throw an error.
+                       (#t (ly:error
+                            "Segment '~a' of part '~a' is still empty and its structure is not defined"
+                            i part)))))
+                  segments)))
        elems)))
 
 gridGetMusic =
