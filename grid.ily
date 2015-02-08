@@ -220,6 +220,35 @@ gridSetStructure =
          \gridPutMusic "<structure>" $segment $ctx-mod $music
        #}))
 
+#(define (sequential-music? music)
+   (equal? 'SequentialMusic (ly:music-property music 'name)))
+
+#(define (create-skips music)
+   (if (not (sequential-music? music))
+       (ly:error "Non sequential music is not supported to create skips. If you absolutely need this, report an issue")
+       (let* ((elems (ly:music-property music 'elements))
+              ;; We filter out music elements without duration, marks, bars...
+              (w-duration (filter (lambda (e)
+                                    (ly:music-property e 'duration #f))
+                                  elems))
+              ;; Then we create a skip event for each original event
+              (skips (map (lambda (elem)
+                            (make-music
+                             'SkipEvent
+                             'duration
+                             (ly:music-property elem 'duration #f)))
+                          w-duration)))
+         (make-music
+          'SequentialMusic
+          'elements
+          skips))))
+
+createSkips =
+#(define-music-function
+   (parser location music) (ly:music?)
+   (create-skips music))
+
+
 #(define (segment-selector? x)
    (or (pair? x)
        (integer? x)
@@ -242,14 +271,15 @@ gridSetStructure =
      (check-coords part start)
      (check-coords part end)
      (let* ((segments (map (lambda (x) (+ x start)) (iota (+ 1 (- end start)))))
-            (elems (map (lambda (i)
-                          (let ((cell (get-music-cell part i)))
-                            (if cell
-                                cell
-                                (ly:error
-                                 "Segment '~a' of part '~a' is still empty"
-                                 i part))))
-                        segments)))
+            (elems
+             (map (lambda (i)
+                    (let ((cell (get-music-cell part i)))
+                      (if cell
+                          cell
+                          x(ly:error
+                           "Segment '~a' of part '~a' is still empty"
+                           i part))))
+                  segments)))
        elems)))
 
 gridGetMusic =
