@@ -179,6 +179,10 @@ Instead, for an example of a multi-file score, take a look at
 Changelog
 ---------
 
+ * 0.3.0 - development
+
+   - Add integers as segment selectors
+
  * 0.2.1
 
    Documentation and license

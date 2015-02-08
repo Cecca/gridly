@@ -164,8 +164,8 @@
 %%% For convenience, let's store the selector in a variable. With 'all
 %%% we are selecting all the segments. If instead we wanted only a
 %%% range of segments, say from 2 to 5, we could have used the tuple
-%%% '(2 . 5). To get a single segment, for instance 3, use the tuple
-%%% '(3 . 3)
+%%% '(2 . 5). To get a single segment, for instance 3, use a single
+%%% integer, 3.
 segments = #'all
 
 \score {
