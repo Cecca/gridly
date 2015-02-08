@@ -220,40 +220,6 @@ gridSetStructure =
          \gridPutMusic "<structure>" $segment $ctx-mod $music
        #}))
 
-#(define (sequential-music? music)
-   (equal? 'SequentialMusic (ly:music-property music 'name)))
-
-#(define (simultaneous-music? music)
-   (equal? 'SimultaneousMusic (ly:music-property music 'name)))
-
-#(define (create-skips music)
-   (let ((err-msg (string-append
-                   "\nNon sequential music is not supported to create skips."
-                   "\nIf you absolutely need this, report an issue to"
-                   "\n   https://github.com/Cecca/gridly/issues/new"
-                   "\nExpected sequential music, got ~a")))
-     (if (not (sequential-music? (display-scheme-music music)))
-         (ly:error err-msg music)
-         (let* ((elems (ly:music-property music 'elements))
-                ;; We filter out music elements without duration, marks, bars...
-                (w-duration (filter (lambda (e)
-                                      (if (simultaneous-music? e)
-                                          (ly:error err-msg
-                                                    (display-scheme-music e)))
-                                      (ly:music-property e 'duration #f))
-                                    elems))
-                ;; Then we create a skip event for each original event
-                (skips (map (lambda (elem)
-                              (make-music
-                               'SkipEvent
-                               'duration
-                               (ly:music-property elem 'duration #f)))
-                            w-duration)))
-           (make-music
-            'SequentialMusic
-            'elements
-            skips)))))
-
 #(define (cons-skip music length)
    (let ((skip (make-music
                 'RestEvent
@@ -283,14 +249,14 @@ gridSetStructure =
              (find-durations new-acc length goal))))
       (#t (ly:error "We got past the goal!!")))))
 
-#(define (fill-skips music)
+#(define (make-skips music)
    (let ((start (make-music 'SequentialMusic 'elements '())))
      (find-durations start 1 (ly:music-length music))))
 
 fill =
 #(define-music-function
    (parser location music) (ly:music?)
-   (fill-skips music))
+   (make-skips music))
 
 #(define (segment-selector? x)
    (or (pair? x)
@@ -320,9 +286,12 @@ fill =
                       (cond
                        (cell cell)
                        ((get-music-cell "<structure>" i)
-                        (create-skips
-                         (cell:music
-                          (get-music-cell "<structure>" i))))
+                        (make <cell>
+                          #:lyrics #{ #}
+                          #:music
+                          (make-skips
+                           (cell:music
+                            (get-music-cell "<structure>" i)))))
                        (#t (ly:error
                             "Segment '~a' of part '~a' is still empty"
                             i part)))))
