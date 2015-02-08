@@ -254,6 +254,44 @@ gridSetStructure =
             'elements
             skips)))))
 
+#(define (cons-skip music length)
+   (let ((skip (make-music
+                'RestEvent
+                'duration
+                (ly:make-duration length 0 1)))
+         (elements (ly:music-property music 'elements)))
+     (make-music
+      'SequentialMusic
+      'elements
+      (cons skip elements))))
+
+#(define (find-durations acc length goal)
+   (ly:message "Call find-durations with ~a ~a"
+               length goal)
+   (let ((dur (ly:music-length acc)))
+     (ly:message "Current duration is ~a" dur)
+     (display-scheme-music acc)
+     (cond
+
+      ((equal? dur goal) acc)
+
+      ((ly:moment<? dur goal)
+       (let* ((new-acc (cons-skip acc length))
+              (new-dur (ly:music-length new-acc)))
+         (if (ly:moment<? goal new-dur)
+             (find-durations acc (* 2 length) goal)
+             (find-durations new-acc length goal))))
+      (#t (ly:error "We got past the goal!!")))))
+
+#(define (fill-skips music)
+   (let ((start (make-music 'SequentialMusic 'elements '())))
+     (find-durations start 1 (ly:music-length music))))
+
+fill =
+#(define-music-function
+   (parser location music) (ly:music?)
+   (fill-skips music))
+
 #(define (segment-selector? x)
    (or (pair? x)
        (integer? x)
