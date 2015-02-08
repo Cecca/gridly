@@ -42,7 +42,7 @@
 %%% the dimensions of the grid: how many segments it should have and which
 %%% parts it contains. In this case we are initializing a grid with
 %%% two segments and two parts, namely "soprano" and "basso".
-\gridInit #2 #'("soprano"
+\gridInit #3 #'("soprano"
                 "basso")
 
 %%% You can optionally specify the grid "structure", that is, the
@@ -83,8 +83,16 @@
 \relative c' {
   \mark #1
   \tempo 4=120
+  s1 | s1 |
+}
+
+\gridSetStructure #3
+\relative c' {
+  \mark #2
+  
   s1 | s1 \bar "|." |
 }
+
 
 %%% Entering music
 %%% --------------

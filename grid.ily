@@ -230,14 +230,16 @@ gridSetStructure =
    (let ((err-msg (string-append
                    "\nNon sequential music is not supported to create skips."
                    "\nIf you absolutely need this, report an issue to"
-                   "\n   https://github.com/Cecca/gridly/issues/new")))
-     (if (not (sequential-music? music))
-         (ly:error err-msg)
+                   "\n   https://github.com/Cecca/gridly/issues/new"
+                   "\nExpected sequential music, got ~a")))
+     (if (not (sequential-music? (display-scheme-music music)))
+         (ly:error err-msg music)
          (let* ((elems (ly:music-property music 'elements))
                 ;; We filter out music elements without duration, marks, bars...
                 (w-duration (filter (lambda (e)
                                       (if (simultaneous-music? e)
-                                          (ly:error err-msg))
+                                          (ly:error err-msg
+                                                    (display-scheme-music e)))
                                       (ly:music-property e 'duration #f))
                                     elems))
                 ;; Then we create a skip event for each original event
@@ -277,11 +279,15 @@ gridSetStructure =
             (elems
              (map (lambda (i)
                     (let ((cell (get-music-cell part i)))
-                      (if cell
-                          cell
-                          (ly:error
-                           "Segment '~a' of part '~a' is still empty"
-                           i part))))
+                      (cond
+                       (cell cell)
+                       ((get-music-cell "<structure>" i)
+                        (create-skips
+                         (cell:music
+                          (get-music-cell "<structure>" i))))
+                       (#t (ly:error
+                            "Segment '~a' of part '~a' is still empty"
+                            i part)))))
                   segments)))
        elems)))
 
