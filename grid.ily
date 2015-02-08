@@ -2,17 +2,17 @@
 
 %% gridly - simple segmented grid for LilyPond
 %% Copyright (C) 2015 - Matteo Ceccarello
-%% 
+%%
 %% This program is free software: you can redistribute it and/or modify
 %% it under the terms of the GNU General Public License as published by
 %% the Free Software Foundation, either version 3 of the License, or
 %% (at your option) any later version.
-%% 
+%%
 %% This program is distributed in the hope that it will be useful,
 %% but WITHOUT ANY WARRANTY; without even the implied warranty of
 %% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 %% GNU General Public License for more details.
-%% 
+%%
 %% You should have received a copy of the GNU General Public License
 %% along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -232,13 +232,13 @@ gridSetStructure =
                       ((pair? start-end)
                        (car start-end))
                       ((integer? start-end)
-                       start-end))
+                       start-end)))
          (end (cond ((equal? 'all start-end)
                      (hash-ref music-grid-meta #:segments))
                     ((pair? start-end)
                      (cdr start-end))
                     ((integer? start-end)
-                     start-end)))
+                     start-end))))
      (check-coords part start)
      (check-coords part end)
      (let* ((segments (map (lambda (x) (+ x start)) (iota (+ 1 (- end start)))))
