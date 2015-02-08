@@ -92,10 +92,10 @@ of things that are used in almost all the functions.
 ### Segment selectors
 
 Used in functions to get the music out of the grid, segment selectors
-are either scheme pairs or the symbol `'all`. The latter selector is
-used to select all the segments in the grid, whereas the former
-specifies a range, with start and end points included. So `'(3 . 6)`
-will select all the segments from `3` to `6`, included.
+are either scheme pairs, integers or the symbol `'all`. The latter selector is
+used to select all the segments in the grid, an integer selects a
+single segment, whereas the pair specifies a range, with start and end points
+included. So `'(3 . 6)` will select all the segments from `3` to `6`, included.
 
 In the public functions description, segment selectors are identified
 by `seg-sel`.
